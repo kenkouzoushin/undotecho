@@ -481,7 +481,7 @@ function changeMonth(d) {
   loadGoal();
 }
 
-function loadGoal() {
+async function loadGoal() {
   document.getElementById('mlbl').textContent = curY+'年 '+curM+'月';
   const k = curY+'_'+curM;
   const d = goalStore[k] || {};
@@ -493,8 +493,26 @@ function loadGoal() {
   if (curAch==='good') document.querySelectorAll('.achip')[0].classList.add('sg');
   if (curAch==='mid')  document.querySelectorAll('.achip')[1].classList.add('sm');
   if (curAch==='bad')  document.querySelectorAll('.achip')[2].classList.add('sb');
-  document.getElementById('staff-msg').textContent =
-    d.staffComment || '目標を書いたら、スタッフに声をかけてください！';
+
+  // スタッフコメントをGASから取得
+  const staffEl = document.getElementById('staff-msg');
+  if (userId) {
+    staffEl.textContent = '読み込み中...';
+    try {
+      const ym = curY+'/'+String(curM).padStart(2,'0');
+      const r = await gasGet({action:'getGoal', userId, yearMonth:ym});
+      if (r && r.staffComment) {
+        staffEl.textContent = r.staffComment;
+        goalStore[k] = {...(goalStore[k]||{}), staffComment:r.staffComment};
+      } else {
+        staffEl.textContent = 'スタッフからのコメントはまだありません。';
+      }
+    } catch(e) {
+      staffEl.textContent = d.staffComment || 'スタッフからのコメントはまだありません。';
+    }
+  } else {
+    staffEl.textContent = '登録すると、スタッフからのコメントが届きます。';
+  }
 }
 
 function changeTarget(d) {
