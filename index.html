@@ -484,7 +484,13 @@ function changeMonth(d) {
 async function loadGoal() {
   document.getElementById('mlbl').textContent = curY+'年 '+curM+'月';
   const k = curY+'_'+curM;
+
+  // localStorageから復元
+  const saved = JSON.parse(localStorage.getItem('techo_goals') || '{}');
+  goalStore = saved;
   const d = goalStore[k] || {};
+
+  // ローカル保存値をまず表示
   document.getElementById('goal-text').value = d.goal || '';
   target = d.target || 4;
   document.getElementById('tnum').textContent = target;
@@ -494,18 +500,31 @@ async function loadGoal() {
   if (curAch==='mid')  document.querySelectorAll('.achip')[1].classList.add('sm');
   if (curAch==='bad')  document.querySelectorAll('.achip')[2].classList.add('sb');
 
-  // スタッフコメントをGASから取得
+  // GASから最新データ（目標＋スタッフコメント）を取得
   const staffEl = document.getElementById('staff-msg');
   if (userId) {
     staffEl.textContent = '読み込み中...';
     try {
       const ym = curY+'/'+String(curM).padStart(2,'0');
       const r = await gasGet({action:'getGoal', userId, yearMonth:ym});
-      if (r && r.staffComment) {
-        staffEl.textContent = r.staffComment;
-        goalStore[k] = {...(goalStore[k]||{}), staffComment:r.staffComment};
+      if (r && r.success) {
+        // 目標テキストがGASにあればそちらを優先表示
+        if (r.goal) {
+          document.getElementById('goal-text').value = r.goal;
+          target = r.targetVisits || target;
+          document.getElementById('tnum').textContent = target;
+          curAch = r.achievement || curAch;
+          document.querySelectorAll('.achip').forEach(c => c.classList.remove('sg','sm','sb'));
+          if (curAch==='good') document.querySelectorAll('.achip')[0].classList.add('sg');
+          if (curAch==='mid')  document.querySelectorAll('.achip')[1].classList.add('sm');
+          if (curAch==='bad')  document.querySelectorAll('.achip')[2].classList.add('sb');
+          // localStorageにも更新保存
+          goalStore[k] = {goal:r.goal, target:r.targetVisits||4, ach:r.achievement||'', staffComment:r.staffComment||''};
+          localStorage.setItem('techo_goals', JSON.stringify(goalStore));
+        }
+        staffEl.textContent = r.staffComment || 'スタッフからのコメントはまだありません。';
       } else {
-        staffEl.textContent = 'スタッフからのコメントはまだありません。';
+        staffEl.textContent = d.staffComment || 'スタッフからのコメントはまだありません。';
       }
     } catch(e) {
       staffEl.textContent = d.staffComment || 'スタッフからのコメントはまだありません。';
@@ -530,14 +549,17 @@ async function saveGoal() {
   if (!userId) { showReg(); return; }
   const goal = document.getElementById('goal-text').value;
   const ym = curY+'/'+String(curM).padStart(2,'0');
-  goalStore[curY+'_'+curM] = {goal, target, ach:curAch};
+  const k = curY+'_'+curM;
+  // localStorageに保存（ブラウザを閉じても残る）
+  goalStore[k] = {goal, target, ach:curAch, staffComment: (goalStore[k]||{}).staffComment||''};
+  localStorage.setItem('techo_goals', JSON.stringify(goalStore));
   const msg = document.getElementById('save-msg');
   msg.textContent = '保存中...';
   try {
     await gasGet({action:'saveGoal', userId, userName, yearMonth:ym, goal, targetVisits:target, achievement:curAch});
     msg.textContent = '✓ 保存しました';
   } catch(e) {
-    msg.textContent = '保存できませんでした';
+    msg.textContent = '✓ 保存しました（ローカル）';
   }
   setTimeout(() => msg.textContent='', 3000);
 }
