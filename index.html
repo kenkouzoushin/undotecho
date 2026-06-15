@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="My運動手帳">
 <title>My 運動手帳 — 蓮沼交流センター</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
@@ -17,105 +19,125 @@
 }
 body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .app{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
-.hdr{background:var(--teal);color:#fff;padding:16px 18px 12px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+
+/* ヘッダー */
+.hdr{background:var(--teal);color:#fff;padding:16px 18px 12px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .hdr i{font-size:28px}
 .hdr-info{flex:1}
-.hdr-title{font-size:20px;font-weight:600}
-.hdr-sub{font-size:13px;opacity:.85;margin-top:2px}
-.hdr-user{font-size:13px;background:rgba(255,255,255,.2);border-radius:20px;padding:6px 12px;cursor:pointer;white-space:nowrap;border:none;color:#fff}
-.nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:60px;z-index:10}
-.nb{flex:1;padding:14px 4px 12px;font-size:12px;text-align:center;background:none;border:none;cursor:pointer;color:var(--text-s);border-bottom:3px solid transparent;line-height:1.3}
-.nb.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.hdr-title{font-size:20px;font-weight:700}
+.hdr-sub{font-size:12px;opacity:.85;margin-top:2px}
+.hdr-user{font-size:13px;background:rgba(255,255,255,.2);border-radius:20px;padding:6px 14px;cursor:pointer;white-space:nowrap;border:none;color:#fff;font-weight:600}
+
+/* ナビ */
+.nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:62px;z-index:10;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.nb{flex:1;padding:14px 4px 12px;font-size:12px;text-align:center;background:none;border:none;cursor:pointer;color:var(--text-s);border-bottom:3px solid transparent;line-height:1.3;font-family:inherit}
+.nb.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:700}
 .nb i{display:block;font-size:22px;margin-bottom:4px}
+
+/* ページ */
 .page{display:none;padding:16px;flex:1}
 .page.active{display:block}
 
 /* 登録画面 */
 .reg-wrap{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:16px}
-.reg-box{background:var(--card);border-radius:16px;padding:28px;width:100%;border:1px solid var(--border)}
-.reg-title{font-size:22px;font-weight:600;margin-bottom:8px}
-.reg-sub{font-size:15px;color:var(--text-s);margin-bottom:20px;line-height:1.6}
-.reg-input{width:100%;padding:16px 14px;font-size:18px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);margin-bottom:12px;font-family:inherit}
+.reg-box{background:var(--card);border-radius:20px;padding:32px 24px;width:100%;border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.reg-logo{text-align:center;margin-bottom:20px}
+.reg-logo i{font-size:52px;color:var(--teal)}
+.reg-title{font-size:22px;font-weight:700;margin-bottom:8px;text-align:center}
+.reg-sub{font-size:15px;color:var(--text-s);margin-bottom:24px;line-height:1.7;text-align:center}
+.reg-input{width:100%;padding:18px 14px;font-size:20px;border:2px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);margin-bottom:14px;font-family:inherit;text-align:center}
 .reg-input:focus{outline:none;border-color:var(--teal)}
-.reg-btn{width:100%;padding:18px;font-size:18px;font-weight:600;border-radius:10px;border:none;cursor:pointer;background:var(--teal);color:#fff;font-family:inherit}
+.reg-btn{width:100%;padding:20px;font-size:20px;font-weight:700;border-radius:12px;border:none;cursor:pointer;background:var(--teal);color:#fff;font-family:inherit}
 .reg-btn:disabled{opacity:.5;cursor:not-allowed}
 .reg-msg{font-size:14px;color:var(--text-s);text-align:center;margin-top:12px;min-height:20px}
 
-/* スタンプ */
-.cnt-big{font-size:56px;font-weight:700;color:var(--teal);text-align:center;margin:10px 0 4px;line-height:1}
-.cnt-lbl{font-size:15px;color:var(--text-s);text-align:center;margin-bottom:12px}
-.prog-bg{background:var(--border);border-radius:20px;height:12px;margin-bottom:6px}
-.prog-fill{height:12px;background:var(--teal);border-radius:20px;transition:width .4s}
-.prog-lbl{font-size:13px;color:var(--text-s);text-align:center;margin-bottom:14px}
-.big-btn{width:100%;padding:22px;font-size:20px;font-weight:600;border-radius:14px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;font-family:inherit}
-.big-btn:active{opacity:.85;transform:scale(.98)}
-.btn-teal{background:var(--teal);color:#fff}
+/* スタンプカウンター */
+.cnt-big{font-size:64px;font-weight:700;color:var(--teal);text-align:center;margin:12px 0 4px;line-height:1}
+.cnt-lbl{font-size:16px;color:var(--text-s);text-align:center;margin-bottom:14px}
+.prog-bg{background:var(--border);border-radius:20px;height:14px;margin-bottom:6px}
+.prog-fill{height:14px;background:var(--teal);border-radius:20px;transition:width .5s ease}
+.prog-lbl{font-size:14px;color:var(--text-s);text-align:center;margin-bottom:16px}
+
+/* ボタン */
+.big-btn{width:100%;padding:22px;font-size:20px;font-weight:700;border-radius:16px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;font-family:inherit;transition:transform .1s,opacity .1s}
+.big-btn:active{opacity:.85;transform:scale(.97)}
+.btn-teal{background:var(--teal);color:#fff;box-shadow:0 4px 14px rgba(29,158,117,.35)}
 .btn-outline{background:var(--card);border:2px solid var(--border);color:var(--text);font-size:17px;padding:16px}
-.sync-bar{display:none;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;font-size:14px;margin-bottom:10px}
-.s-ok{background:var(--teal-light);color:var(--teal-dk)}
-.s-err{background:var(--red-light);color:var(--red-dk)}
-.s-load{background:#F1F5F9;color:var(--text-s)}
-.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
-.sec-ttl{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+
+/* 通知バー */
+.notify{display:none;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;font-size:14px;margin-bottom:10px;font-weight:600}
+.n-ok{background:var(--teal-light);color:var(--teal-dk)}
+.n-err{background:var(--red-light);color:var(--red-dk)}
+.n-load{background:#F1F5F9;color:var(--text-s)}
+
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.sec-ttl{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .sec-note{font-size:13px;color:var(--text-s);margin-bottom:12px}
-.sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px}
-.sc{aspect-ratio:1;border-radius:10px;border:2px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card);font-size:12px;color:var(--text-t);font-weight:600;position:relative}
+
+/* スタンプグリッド */
+.sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
+.sc{aspect-ratio:1;border-radius:12px;border:2px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card);font-size:12px;color:var(--text-t);font-weight:700;position:relative;transition:transform .1s}
 .sc.on{background:var(--teal-light);border-color:var(--teal)}
 .sc.on i{color:var(--teal);font-size:22px}
 .sc.ms{background:var(--amber-light);border-color:var(--amber)}
 .sc.ms.on{background:#FFF0C0;border-color:var(--amber)}
-.mbadge{font-size:9px;background:var(--amber);color:#fff;border-radius:20px;padding:2px 5px;position:absolute;top:-6px;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:600}
-.mitem{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border-radius:10px;border:1px solid var(--border);margin-bottom:8px}
-.conn-box{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:16px}
-.conn-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.conn-label{font-size:15px;font-weight:600;color:var(--text)}
-.conn-btn{padding:10px 16px;font-size:14px;border-radius:8px;border:2px solid var(--teal);background:none;color:var(--teal);cursor:pointer;font-weight:600;font-family:inherit}
-.conn-btn:disabled{opacity:.4;cursor:not-allowed}
-.conn-result{font-size:14px;padding:10px 12px;border-radius:8px;line-height:1.6;color:var(--text-s);background:var(--bg);border:1px solid var(--border)}
+.ms-badge{font-size:8px;background:var(--amber);color:#fff;border-radius:20px;padding:2px 5px;position:absolute;top:-6px;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:700}
+
+/* マシン */
+.mitem{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border-radius:12px;border:1px solid var(--border);margin-bottom:8px}
 
 /* 月別目標 */
 .msel{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.mnav{background:none;border:2px solid var(--border);border-radius:10px;padding:10px 18px;font-size:22px;cursor:pointer;color:var(--text);font-family:inherit}
-.mlbl{font-size:22px;font-weight:600;color:var(--text)}
-.gcard{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:12px}
-.glbl{font-size:14px;color:var(--text-s);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.mnav{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:10px 20px;font-size:24px;cursor:pointer;color:var(--text);font-family:inherit;transition:background .1s}
+.mnav:active{background:var(--bg)}
+.mlbl{font-size:22px;font-weight:700;color:var(--text)}
+.gcard{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.glbl{font-size:14px;color:var(--text-s);margin-bottom:10px;display:flex;align-items:center;gap:6px;font-weight:600}
 .ginput{width:100%;padding:14px;font-size:17px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);resize:none;line-height:1.6;font-family:inherit}
 .ginput:focus{outline:none;border-color:var(--teal)}
-.crow{display:flex;align-items:center;gap:16px;padding:10px 0}
-.cbtn{width:56px;height:56px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:28px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;font-family:inherit}
-.cbtn:active{transform:scale(.9)}
-.cnum{font-size:40px;font-weight:700;color:var(--teal);min-width:60px;text-align:center}
+.crow{display:flex;align-items:center;gap:16px;padding:8px 0}
+.cbtn{width:56px;height:56px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:30px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;font-family:inherit;transition:transform .1s}
+.cbtn:active{transform:scale(.88)}
+.cnum{font-size:44px;font-weight:700;color:var(--teal);min-width:60px;text-align:center}
 .arow{display:flex;gap:8px;margin-top:10px}
-.achip{flex:1;padding:14px 4px;border-radius:10px;text-align:center;font-size:14px;cursor:pointer;border:2px solid var(--border);background:var(--card);color:var(--text-s);font-family:inherit}
-.achip.sg{background:var(--teal-light);border-color:var(--teal);color:var(--teal-dk);font-weight:600}
-.achip.sm{background:var(--amber-light);border-color:var(--amber);color:#633806;font-weight:600}
-.achip.sb{background:var(--red-light);border-color:#E24B4A;color:var(--red-dk);font-weight:600}
-.stcard{background:var(--teal-light);border-radius:14px;border:1px solid var(--teal);padding:16px;margin-bottom:12px}
-.stttl{font-size:14px;font-weight:600;color:var(--teal-dk);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.stbody{font-size:16px;color:var(--teal-dk);line-height:1.7;min-height:28px}
-.savemsg{height:20px;font-size:14px;color:var(--teal);text-align:center;margin-top:6px}
+.achip{flex:1;padding:14px 4px;border-radius:12px;text-align:center;font-size:14px;cursor:pointer;border:2px solid var(--border);background:var(--card);color:var(--text-s);font-family:inherit;font-weight:600;transition:all .15s}
+.achip.sg{background:var(--teal-light);border-color:var(--teal);color:var(--teal-dk)}
+.achip.sm{background:var(--amber-light);border-color:var(--amber);color:#633806}
+.achip.sb{background:var(--red-light);border-color:#E24B4A;color:var(--red-dk)}
+
+/* スタッフコメント */
+.stcard{background:var(--teal-light);border-radius:16px;border:1px solid var(--teal);padding:18px;margin-bottom:14px}
+.stttl{font-size:14px;font-weight:700;color:var(--teal-dk);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.stbody{font-size:16px;color:var(--teal-dk);line-height:1.8;min-height:28px}
+.savemsg{height:20px;font-size:14px;color:var(--teal);text-align:center;margin-top:6px;font-weight:600}
 
 /* 振り返り */
-.cmphdr{background:var(--purple-light);border-radius:14px;padding:14px 16px;margin-bottom:16px}
-.cmpttl{font-size:18px;font-weight:600;color:var(--purple-dk)}
+.cmphdr{background:var(--purple-light);border-radius:16px;padding:16px 18px;margin-bottom:18px}
+.cmpttl{font-size:18px;font-weight:700;color:var(--purple-dk)}
 .cmpsub{font-size:14px;color:var(--purple);margin-top:4px}
-.cmpgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.cmpc{background:var(--card);border-radius:10px;padding:14px;border:1px solid var(--border)}
+.cmpgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.cmpc{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border)}
 .cmpc.now{border-color:var(--teal);border-width:2px}
-.cmplbl{font-size:13px;color:var(--text-s);margin-bottom:6px}
-.cmpval{font-size:24px;font-weight:700;color:var(--text)}
+.cmplbl{font-size:13px;color:var(--text-s);margin-bottom:6px;font-weight:600}
+.cmpval{font-size:26px;font-weight:700;color:var(--text)}
 .cmpc.now .cmpval{color:var(--teal)}
-.cmpbadge{display:inline-block;font-size:12px;border-radius:20px;padding:3px 10px;margin-top:6px;font-weight:600}
+.cmpbadge{display:inline-block;font-size:12px;border-radius:20px;padding:3px 10px;margin-top:6px;font-weight:700}
 .up{background:#EAF3DE;color:#3B6D11}
 .dn{background:var(--red-light);color:var(--red-dk)}
-.memocard{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:16px;margin-bottom:12px}
-.memottl{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px}
+.memocard{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:18px;margin-bottom:14px}
+.memottl{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px}
 .memoinput{width:100%;padding:14px;font-size:16px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);resize:none;line-height:1.6;min-height:80px;font-family:inherit}
 .memoinput:focus{outline:none;border-color:var(--purple)}
+
+/* お祝いアニメ */
+@keyframes pop{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.pop{animation:pop .3s ease}
 </style>
 </head>
 <body>
 <div class="app">
+
+  <!-- ヘッダー -->
   <div class="hdr">
     <i class="ti ti-notebook" aria-hidden="true"></i>
     <div class="hdr-info">
@@ -127,41 +149,44 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
     </button>
   </div>
 
+  <!-- ナビ -->
   <nav class="nav" role="tablist">
-    <button class="nb active" onclick="showPage('stamp')" role="tab"><i class="ti ti-rosette" aria-hidden="true"></i>スタンプ</button>
-    <button class="nb" onclick="showPage('goal')" role="tab"><i class="ti ti-target" aria-hidden="true"></i>月の目標</button>
-    <button class="nb" onclick="showPage('compare')" role="tab"><i class="ti ti-chart-line" aria-hidden="true"></i>振り返り</button>
+    <button class="nb active" onclick="showPage('stamp')" role="tab" aria-label="スタンプページ">
+      <i class="ti ti-rosette" aria-hidden="true"></i>スタンプ
+    </button>
+    <button class="nb" onclick="showPage('goal')" role="tab" aria-label="月の目標ページ">
+      <i class="ti ti-target" aria-hidden="true"></i>月の目標
+    </button>
+    <button class="nb" onclick="showPage('compare')" role="tab" aria-label="振り返りページ">
+      <i class="ti ti-chart-line" aria-hidden="true"></i>振り返り
+    </button>
   </nav>
 
   <!-- スタンプページ -->
   <div class="page active" id="page-stamp">
-    <div class="conn-box">
-      <div class="conn-row">
-        <span class="conn-label"><i class="ti ti-cloud" aria-hidden="true" style="margin-right:6px"></i>接続確認</span>
-        <button class="conn-btn" id="test-btn" onclick="testConnection()">テスト送信</button>
-      </div>
-      <div class="conn-result" id="conn-result">「テスト送信」でスプレッドシートへの接続を確認できます</div>
-    </div>
-
     <div class="cnt-big" id="stamp-count">0</div>
     <div class="cnt-lbl">回 来館しました</div>
     <div class="prog-bg"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
     <div class="prog-lbl" id="prog-lbl">次の節目まで あと 10 回</div>
 
-    <button class="big-btn btn-teal" onclick="addStamp()">
+    <button class="big-btn btn-teal" onclick="addStamp()" id="stamp-btn">
       <i class="ti ti-plus" aria-hidden="true"></i>今日来たよ！スタンプを押す
     </button>
-    <div class="sync-bar" id="sync-bar">
-      <i class="ti ti-refresh" aria-hidden="true"></i><span id="sync-msg"></span>
+    <div class="notify" id="notify">
+      <i class="ti ti-refresh" aria-hidden="true"></i><span id="notify-msg"></span>
     </div>
 
     <div class="divider"></div>
-    <div class="sec-ttl"><i class="ti ti-rosette" style="color:var(--teal)" aria-hidden="true"></i>来館スタンプ</div>
-    <div class="sec-note">10・20・30回でスタッフからメッセージカードをプレゼント</div>
+    <div class="sec-ttl">
+      <i class="ti ti-rosette" style="color:var(--teal)" aria-hidden="true"></i>来館スタンプ
+    </div>
+    <div class="sec-note">10・20・30回達成でスタッフからメッセージカードをプレゼント🎉</div>
     <div class="sgrid" id="sgrid"></div>
 
     <div class="divider"></div>
-    <div class="sec-ttl"><i class="ti ti-barbell" style="color:var(--purple)" aria-hidden="true"></i>マシン初挑戦</div>
+    <div class="sec-ttl">
+      <i class="ti ti-barbell" style="color:var(--purple)" aria-hidden="true"></i>マシン初挑戦スタンプ
+    </div>
     <div class="sec-note">はじめて使うマシンに挑戦したら記録しよう</div>
     <button class="big-btn btn-outline" onclick="addMachine()">
       <i class="ti ti-plus" aria-hidden="true"></i>　マシンに初挑戦した！
@@ -176,18 +201,25 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
       <div class="mlbl" id="mlbl"></div>
       <button class="mnav" onclick="changeMonth(1)" aria-label="次の月">›</button>
     </div>
+
     <div class="gcard">
       <div class="glbl"><i class="ti ti-flag" aria-hidden="true"></i>今月のチャレンジ目標</div>
-      <textarea class="ginput" id="goal-text" rows="3" placeholder="例：週2回来館する　ストレッチを毎日やる"></textarea>
+      <textarea class="ginput" id="goal-text" rows="3"
+        placeholder="例：週2回来館する　ストレッチを毎日やる"></textarea>
     </div>
+
     <div class="gcard">
       <div class="glbl"><i class="ti ti-calendar" aria-hidden="true"></i>来館目標回数</div>
       <div class="crow">
         <button class="cbtn" onclick="changeTarget(-1)" aria-label="減らす">−</button>
-        <div><div class="cnum" id="tnum">4</div><div style="font-size:13px;color:var(--text-s);text-align:center">回 / 月</div></div>
+        <div>
+          <div class="cnum" id="tnum">4</div>
+          <div style="font-size:13px;color:var(--text-s);text-align:center">回 / 月</div>
+        </div>
         <button class="cbtn" onclick="changeTarget(1)" aria-label="増やす">＋</button>
       </div>
     </div>
+
     <div class="gcard">
       <div class="glbl"><i class="ti ti-pencil" aria-hidden="true"></i>月末の振り返り</div>
       <div class="arow" id="arow">
@@ -196,11 +228,15 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
         <button class="achip" onclick="selAch(this,'bad')">× もう少し</button>
       </div>
     </div>
+
     <div class="stcard">
-      <div class="stttl"><i class="ti ti-message-circle" aria-hidden="true"></i>スタッフからのひとこと</div>
+      <div class="stttl">
+        <i class="ti ti-message-circle" aria-hidden="true"></i>スタッフからのひとこと
+      </div>
       <div class="stbody" id="staff-msg">目標を書いたら、スタッフに声をかけてください！</div>
     </div>
-    <button class="big-btn btn-teal" onclick="saveGoal()" style="font-size:17px;padding:16px">
+
+    <button class="big-btn btn-teal" onclick="saveGoal()" style="font-size:18px;padding:18px">
       <i class="ti ti-cloud-upload" aria-hidden="true"></i>目標を保存する
     </button>
     <div class="savemsg" id="save-msg"></div>
@@ -210,9 +246,10 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
   <div class="page" id="page-compare">
     <div class="cmphdr">
       <div class="cmpttl">「去年の私」と比べてみよう</div>
-      <div class="cmpsub">年度末に記入。成長を実感しよう！</div>
+      <div class="cmpsub">年度末に記入して、一年間の成長を実感しよう！</div>
     </div>
-    <div style="font-size:14px;font-weight:600;color:var(--text-s);margin-bottom:8px">来館回数</div>
+
+    <div style="font-size:14px;font-weight:700;color:var(--text-s);margin-bottom:8px">来館回数</div>
     <div class="cmpgrid">
       <div class="cmpc">
         <div class="cmplbl">去年</div>
@@ -220,12 +257,13 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
           style="width:100%;font-size:22px;padding:8px 10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit">
       </div>
       <div class="cmpc now">
-        <div class="cmplbl">今年</div>
+        <div class="cmplbl">今年（スタンプ数）</div>
         <div class="cmpval" id="tv">—</div>
         <span class="cmpbadge" id="vbadge" style="display:none"></span>
       </div>
     </div>
-    <div style="font-size:14px;font-weight:600;color:var(--text-s);margin-bottom:8px;margin-top:6px">初挑戦マシン数</div>
+
+    <div style="font-size:14px;font-weight:700;color:var(--text-s);margin-bottom:8px;margin-top:4px">初挑戦マシン数</div>
     <div class="cmpgrid">
       <div class="cmpc">
         <div class="cmplbl">去年</div>
@@ -238,24 +276,36 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
         <span class="cmpbadge" id="mbadge" style="display:none"></span>
       </div>
     </div>
+
     <div class="divider"></div>
+
     <div class="memocard">
       <div class="memottl"><i class="ti ti-writing" aria-hidden="true"></i>　来年の自分へのひとこと</div>
       <textarea class="memoinput" placeholder="来年も元気に来ようね！など"></textarea>
     </div>
+
     <div class="stcard" style="background:var(--purple-light);border-color:var(--purple)">
-      <div class="stttl" style="color:var(--purple-dk)"><i class="ti ti-user" aria-hidden="true"></i>スタッフより</div>
-      <div class="stbody" style="color:var(--purple)">一年間、お疲れさまでした！<br>来年もここで一緒に頑張りましょう。</div>
+      <div class="stttl" style="color:var(--purple-dk)">
+        <i class="ti ti-user" aria-hidden="true"></i>スタッフより
+      </div>
+      <div class="stbody" style="color:var(--purple)">
+        一年間、お疲れさまでした！<br>来年もここで一緒に頑張りましょう。
+      </div>
     </div>
   </div>
 
-  <!-- 利用者登録 -->
+  <!-- 利用者登録画面 -->
   <div id="reg-overlay" style="display:none">
     <div class="reg-wrap">
       <div class="reg-box">
+        <div class="reg-logo"><i class="ti ti-notebook" aria-hidden="true"></i></div>
         <div class="reg-title">はじめまして！</div>
-        <div class="reg-sub">お名前を入力して「登録する」を押してください。次回から自動でログインします。</div>
-        <input class="reg-input" type="text" id="reg-name" placeholder="例：山田 花子" maxlength="20">
+        <div class="reg-sub">
+          お名前を入力して<br>「登録する」を押してください。<br>
+          <span style="font-size:13px">次回から自動でログインします。</span>
+        </div>
+        <input class="reg-input" type="text" id="reg-name"
+          placeholder="山田 花子" maxlength="20" autocomplete="name">
         <button class="reg-btn" id="reg-btn" onclick="registerUser()">
           <i class="ti ti-check" aria-hidden="true"></i>　登録する
         </button>
@@ -263,226 +313,248 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
       </div>
     </div>
   </div>
-</div>
+
+</div><!-- /.app -->
 
 <script>
 const GAS = 'https://script.google.com/macros/s/AKfycby92i5GiuM1c-wIGyOmn9eFKQo3_AsiRBtKN3ZgulIEekrsIPTKqhPP0q7gzU4MAwkh/exec';
-const MS = [10,20,30];
+const MS = [10, 20, 30];
 
 let userId   = localStorage.getItem('techo_uid') || '';
 let userName = localStorage.getItem('techo_uname') || '';
 let stamps   = parseInt(localStorage.getItem('techo_stamps') || '0');
 let machines = JSON.parse(localStorage.getItem('techo_machines') || '[]');
-let curM = new Date().getMonth()+1;
+let curM = new Date().getMonth() + 1;
 let curY = new Date().getFullYear();
-let target=4, curAch='', goalStore={};
+let target = 4, curAch = '', goalStore = {};
 
+// GAS通信
 async function gasGet(params) {
   const qs = Object.entries(params)
     .map(([k,v]) => encodeURIComponent(k)+'='+encodeURIComponent(String(v)))
     .join('&');
   const res = await fetch(GAS+'?'+qs, {redirect:'follow'});
   const text = await res.text();
-  try { return JSON.parse(text); }
-  catch(e) { return {success:true}; }
+  try { return JSON.parse(text); } catch(e) { return {success:true}; }
 }
 
-function showSync(type,msg){
-  const bar=document.getElementById('sync-bar');
-  bar.style.display='flex';
-  bar.className='sync-bar s-'+type;
-  bar.querySelector('i').className=
-    type==='ok'?'ti ti-cloud-check':
-    type==='err'?'ti ti-alert-circle':'ti ti-refresh';
-  document.getElementById('sync-msg').textContent=msg;
-  if(type!=='load') setTimeout(()=>bar.style.display='none',3500);
+// 通知バー
+let notifyTimer;
+function showNotify(type, msg) {
+  const bar = document.getElementById('notify');
+  const ic  = bar.querySelector('i');
+  bar.style.display = 'flex';
+  bar.className = 'notify n-'+type;
+  ic.className = type==='ok' ? 'ti ti-cloud-check' : type==='err' ? 'ti ti-alert-circle' : 'ti ti-refresh';
+  document.getElementById('notify-msg').textContent = msg;
+  clearTimeout(notifyTimer);
+  if (type !== 'load') notifyTimer = setTimeout(() => bar.style.display='none', 3000);
 }
 
-async function testConnection(){
-  const btn=document.getElementById('test-btn');
-  const res=document.getElementById('conn-result');
-  btn.disabled=true;
-  res.style.color='var(--text-s)';
-  res.style.background='var(--bg)';
-  res.textContent='送信中...';
+// ページ切替
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  ['stamp','goal','compare'].forEach((n,i) => {
+    if (n===id) document.querySelectorAll('.nb')[i].classList.add('active');
+  });
+  if (id==='goal') loadGoal();
+  if (id==='compare') updCmp();
+}
+
+// 登録画面
+function showReg() { document.getElementById('reg-overlay').style.display='block'; }
+
+async function registerUser() {
+  const name = document.getElementById('reg-name').value.trim();
+  if (!name) { document.getElementById('reg-msg').textContent='お名前を入力してください'; return; }
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true;
+  document.getElementById('reg-msg').textContent = '登録中...';
+  const newId = 'U_'+Date.now();
   try {
     await gasGet({
-      action:'addStamp',
-      userId:userId||'TEST_USER',
-      userName:userName||'テストユーザー',
-      stampType:'接続テスト',
-      note:'HTMLファイルからの動作確認'
+      action:'registerUser', userId:newId, name,
+      startDate: new Date().toLocaleDateString('ja-JP')
     });
-    res.style.color='var(--teal-dk)';
-    res.style.background='var(--teal-light)';
-    res.textContent='接続成功！スプレッドシートの「スタンプ記録」シートに「接続テスト」の行が追加されているか確認してください。';
-  } catch(e) {
-    res.style.color='var(--red-dk)';
-    res.style.background='var(--red-light)';
-    res.textContent='エラー：'+e.message;
-  }
-  btn.disabled=false;
+  } catch(e) {}
+  userId = newId; userName = name;
+  localStorage.setItem('techo_uid', userId);
+  localStorage.setItem('techo_uname', userName);
+  document.getElementById('user-badge').innerHTML = '<i class="ti ti-user"></i> '+name;
+  document.getElementById('reg-overlay').style.display = 'none';
+  btn.disabled = false;
 }
 
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  ['stamp','goal','compare'].forEach((n,i)=>{
-    if(n===id) document.querySelectorAll('.nb')[i].classList.add('active');
-  });
-  if(id==='goal') loadGoal();
-  if(id==='compare') updCmp();
-}
-
-function showReg(){ document.getElementById('reg-overlay').style.display='block'; }
-
-async function registerUser(){
-  const name=document.getElementById('reg-name').value.trim();
-  if(!name){ document.getElementById('reg-msg').textContent='お名前を入力してください'; return; }
-  const btn=document.getElementById('reg-btn');
-  btn.disabled=true;
-  document.getElementById('reg-msg').textContent='登録中...';
-  const newId='U_'+Date.now();
-  try {
-    await gasGet({action:'registerUser',userId:newId,name,startDate:new Date().toLocaleDateString('ja-JP')});
-    userId=newId; userName=name;
-    localStorage.setItem('techo_uid',userId);
-    localStorage.setItem('techo_uname',userName);
-    document.getElementById('user-badge').innerHTML='<i class="ti ti-user"></i> '+name;
-    document.getElementById('reg-overlay').style.display='none';
-    const cr=document.getElementById('conn-result');
-    cr.style.color='var(--teal-dk)'; cr.style.background='var(--teal-light)';
-    cr.textContent=name+'さんを登録しました！「利用者マスタ」シートに追加されています。';
-  } catch(e) {
-    userId=newId; userName=name;
-    localStorage.setItem('techo_uid',userId);
-    localStorage.setItem('techo_uname',userName);
-    document.getElementById('user-badge').innerHTML='<i class="ti ti-user"></i> '+name;
-    document.getElementById('reg-overlay').style.display='none';
-    document.getElementById('reg-msg').textContent='';
-  }
-  btn.disabled=false;
-}
-
-function renderGrid(){
-  const g=document.getElementById('sgrid'); g.innerHTML='';
-  for(let i=1;i<=30;i++){
-    const c=document.createElement('div');
-    const iMs=MS.includes(i);
-    c.className='sc'+(i<=stamps?' on':'')+(iMs?' ms':'');
-    if(iMs){ const b=document.createElement('div'); b.className='mbadge'; b.textContent=i+'回'; c.appendChild(b); }
-    if(i<=stamps){
-      const ic=document.createElement('i');
-      ic.className='ti ti-star-filled';
+// グリッド描画
+function renderGrid() {
+  const g = document.getElementById('sgrid');
+  g.innerHTML = '';
+  for (let i=1; i<=30; i++) {
+    const c = document.createElement('div');
+    const iMs = MS.includes(i);
+    c.className = 'sc' + (i<=stamps?' on':'') + (iMs?' ms':'');
+    if (iMs) {
+      const b = document.createElement('div');
+      b.className = 'ms-badge';
+      b.textContent = i+'回';
+      c.appendChild(b);
+    }
+    if (i<=stamps) {
+      const ic = document.createElement('i');
+      ic.className = 'ti ti-star-filled';
       ic.setAttribute('aria-hidden','true');
-      ic.style.cssText='color:'+(iMs?'var(--amber)':'var(--teal)')+';font-size:22px';
+      ic.style.cssText = 'color:'+(iMs?'var(--amber)':'var(--teal)')+';font-size:22px';
       c.appendChild(ic);
-    } else { c.appendChild(document.createTextNode(i)); }
+    } else {
+      c.appendChild(document.createTextNode(i));
+    }
     g.appendChild(c);
   }
-  document.getElementById('stamp-count').textContent=stamps;
-  const next=MS.find(m=>m>stamps)||30;
-  const prev=[...MS].reverse().find(m=>m<=stamps)||0;
-  const pct=stamps>=30?100:Math.round((stamps-prev)/(next-prev)*100);
-  document.getElementById('prog-bar').style.width=pct+'%';
-  document.getElementById('prog-lbl').textContent=stamps>=30?'30回達成！':'次の節目まで あと '+(next-stamps)+' 回';
-  localStorage.setItem('techo_stamps',stamps);
+  document.getElementById('stamp-count').textContent = stamps;
+  const next = MS.find(m=>m>stamps) || 30;
+  const prev = [...MS].reverse().find(m=>m<=stamps) || 0;
+  const pct  = stamps>=30 ? 100 : Math.round((stamps-prev)/(next-prev)*100);
+  document.getElementById('prog-bar').style.width = pct+'%';
+  document.getElementById('prog-lbl').textContent =
+    stamps>=30 ? '🎊 30回達成！おめでとうございます！' :
+    '次の節目まで あと '+(next-stamps)+' 回';
+  localStorage.setItem('techo_stamps', stamps);
 }
 
-async function addStamp(){
-  if(!userId){ showReg(); return; }
-  if(stamps>=30){ alert('30回達成！おめでとうございます！'); return; }
+// スタンプを押す
+async function addStamp() {
+  if (!userId) { showReg(); return; }
+  if (stamps>=30) { alert('30回達成！\nスタッフに声をかけてください！'); return; }
   stamps++;
   renderGrid();
-  showSync('load','スプレッドシートに記録中...');
+  // 押したセルをアニメ
+  const cells = document.querySelectorAll('.sc');
+  if (cells[stamps-1]) { cells[stamps-1].classList.add('pop'); }
+  showNotify('load', '記録しています...');
   try {
-    await gasGet({action:'addStamp',userId,userName,stampType:'来館',note:''});
-    showSync('ok','スプレッドシートに記録しました');
-    if(MS.includes(stamps)) setTimeout(()=>alert('🎉 '+stamps+'回達成！\n受付スタッフに声をかけてください！'),200);
-  } catch(e) { showSync('err','通信エラー（記録はローカル保存済み）'); }
+    await gasGet({action:'addStamp', userId, userName, stampType:'来館', note:''});
+    showNotify('ok', '記録しました！');
+    if (MS.includes(stamps)) {
+      setTimeout(() => alert('🎉 '+stamps+'回達成！\n受付スタッフに声をかけてください！\nメッセージカードをプレゼントします。'), 300);
+    }
+  } catch(e) {
+    showNotify('err', '記録を保存できませんでした（次回再試行します）');
+  }
 }
 
-async function addMachine(){
-  if(!userId){ showReg(); return; }
-  const name=prompt('どのマシンに初挑戦しましたか？');
-  if(!name) return;
-  const date=new Date().toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
-  machines.push({name,date});
-  localStorage.setItem('techo_machines',JSON.stringify(machines));
+// マシン初挑戦
+async function addMachine() {
+  if (!userId) { showReg(); return; }
+  const name = prompt('どのマシンに初挑戦しましたか？\n（例：トレッドミル、レッグプレスなど）');
+  if (!name) return;
+  const date = new Date().toLocaleDateString('ja-JP',{month:'numeric',day:'numeric'});
+  machines.push({name, date});
+  localStorage.setItem('techo_machines', JSON.stringify(machines));
   renderMachines();
-  showSync('load','記録中...');
+  showNotify('load','記録しています...');
   try {
-    await gasGet({action:'addStamp',userId,userName,stampType:'マシン初挑戦',note:name});
-    showSync('ok','マシン初挑戦を記録しました');
-  } catch(e) { showSync('err','通信エラー（ローカルには保存済み）'); }
+    await gasGet({action:'addStamp', userId, userName, stampType:'マシン初挑戦', note:name});
+    showNotify('ok', name+' の初挑戦を記録しました！');
+  } catch(e) {
+    showNotify('err','通信エラー（ローカルには保存済みです）');
+  }
 }
 
-function renderMachines(){
-  document.getElementById('mlist').innerHTML=machines.map(m=>`
+function renderMachines() {
+  document.getElementById('mlist').innerHTML = machines.map(m => `
     <div class="mitem">
-      <i class="ti ti-circle-check" style="color:var(--purple);font-size:22px"></i>
-      <div>
-        <div style="font-size:16px;font-weight:600;color:var(--text)">${m.name}</div>
+      <i class="ti ti-circle-check" style="color:var(--purple);font-size:24px" aria-hidden="true"></i>
+      <div style="flex:1">
+        <div style="font-size:16px;font-weight:700;color:var(--text)">${m.name}</div>
         <div style="font-size:13px;color:var(--text-s)">${m.date} 初挑戦</div>
       </div>
     </div>`).join('');
 }
 
-function changeMonth(d){
-  curM+=d;
-  if(curM<1){curM=12;curY--;} if(curM>12){curM=1;curY++;}
+// 月切替
+function changeMonth(d) {
+  curM += d;
+  if (curM<1) { curM=12; curY--; }
+  if (curM>12) { curM=1; curY++; }
   loadGoal();
 }
-function loadGoal(){
-  document.getElementById('mlbl').textContent=curY+'年 '+curM+'月';
-  const k=curY+'_'+curM, d=goalStore[k]||{};
-  document.getElementById('goal-text').value=d.goal||'';
-  target=d.target||4;
-  document.getElementById('tnum').textContent=target;
-  curAch=d.ach||'';
-  document.querySelectorAll('.achip').forEach(c=>c.classList.remove('sg','sm','sb'));
-  if(curAch==='good') document.querySelectorAll('.achip')[0].classList.add('sg');
-  if(curAch==='mid')  document.querySelectorAll('.achip')[1].classList.add('sm');
-  if(curAch==='bad')  document.querySelectorAll('.achip')[2].classList.add('sb');
-  document.getElementById('staff-msg').textContent=d.staffComment||'目標を書いたら、スタッフに声をかけてください！';
-}
-function changeTarget(d){ target=Math.max(1,target+d); document.getElementById('tnum').textContent=target; }
-function selAch(el,t){
-  document.querySelectorAll('.achip').forEach(c=>c.classList.remove('sg','sm','sb'));
-  el.classList.add(t==='good'?'sg':t==='mid'?'sm':'sb');
-  curAch=t;
-}
-async function saveGoal(){
-  if(!userId){ showReg(); return; }
-  const goal=document.getElementById('goal-text').value;
-  const ym=curY+'/'+String(curM).padStart(2,'0');
-  goalStore[curY+'_'+curM]={goal,target,ach:curAch};
-  const msg=document.getElementById('save-msg');
-  msg.textContent='保存中...';
-  try {
-    await gasGet({action:'saveGoal',userId,userName,yearMonth:ym,goal,targetVisits:target,achievement:curAch});
-    msg.textContent='✓ スプレッドシートに保存しました';
-  } catch(e) { msg.textContent='通信エラー（ローカルには保存済み）'; }
-  setTimeout(()=>msg.textContent='',3000);
-}
-function updCmp(){
-  const lv=parseInt(document.getElementById('lv').value)||0;
-  const lm=parseInt(document.getElementById('lm').value)||0;
-  document.getElementById('tv').textContent=stamps+' 回';
-  document.getElementById('tm').textContent=machines.length+' 種類';
-  const vb=document.getElementById('vbadge');
-  if(lv>0){ const d=stamps-lv; vb.style.display='inline-block'; vb.textContent=(d>=0?'＋':'')+d+' 回'; vb.className='cmpbadge '+(d>=0?'up':'dn'); }
-  const mb=document.getElementById('mbadge');
-  if(lm>0){ const d=machines.length-lm; mb.style.display='inline-block'; mb.textContent=(d>=0?'＋':'')+d+' 種類'; mb.className='cmpbadge '+(d>=0?'up':'dn'); }
+
+function loadGoal() {
+  document.getElementById('mlbl').textContent = curY+'年 '+curM+'月';
+  const k = curY+'_'+curM;
+  const d = goalStore[k] || {};
+  document.getElementById('goal-text').value = d.goal || '';
+  target = d.target || 4;
+  document.getElementById('tnum').textContent = target;
+  curAch = d.ach || '';
+  document.querySelectorAll('.achip').forEach(c => c.classList.remove('sg','sm','sb'));
+  if (curAch==='good') document.querySelectorAll('.achip')[0].classList.add('sg');
+  if (curAch==='mid')  document.querySelectorAll('.achip')[1].classList.add('sm');
+  if (curAch==='bad')  document.querySelectorAll('.achip')[2].classList.add('sb');
+  document.getElementById('staff-msg').textContent =
+    d.staffComment || '目標を書いたら、スタッフに声をかけてください！';
 }
 
-if(userId){
-  document.getElementById('user-badge').innerHTML='<i class="ti ti-user"></i> '+userName;
-} else {
-  setTimeout(()=>document.getElementById('reg-overlay').style.display='block',600);
+function changeTarget(d) {
+  target = Math.max(1, target+d);
+  document.getElementById('tnum').textContent = target;
 }
-renderGrid(); renderMachines(); loadGoal();
+
+function selAch(el, t) {
+  document.querySelectorAll('.achip').forEach(c => c.classList.remove('sg','sm','sb'));
+  el.classList.add(t==='good'?'sg':t==='mid'?'sm':'sb');
+  curAch = t;
+}
+
+async function saveGoal() {
+  if (!userId) { showReg(); return; }
+  const goal = document.getElementById('goal-text').value;
+  const ym = curY+'/'+String(curM).padStart(2,'0');
+  goalStore[curY+'_'+curM] = {goal, target, ach:curAch};
+  const msg = document.getElementById('save-msg');
+  msg.textContent = '保存中...';
+  try {
+    await gasGet({action:'saveGoal', userId, userName, yearMonth:ym, goal, targetVisits:target, achievement:curAch});
+    msg.textContent = '✓ 保存しました';
+  } catch(e) {
+    msg.textContent = '保存できませんでした';
+  }
+  setTimeout(() => msg.textContent='', 3000);
+}
+
+// 振り返り
+function updCmp() {
+  const lv = parseInt(document.getElementById('lv').value) || 0;
+  const lm = parseInt(document.getElementById('lm').value) || 0;
+  document.getElementById('tv').textContent = stamps+' 回';
+  document.getElementById('tm').textContent = machines.length+' 種類';
+  const vb = document.getElementById('vbadge');
+  if (lv>0) {
+    const d = stamps-lv;
+    vb.style.display='inline-block';
+    vb.textContent = (d>=0?'＋':'')+d+' 回';
+    vb.className = 'cmpbadge '+(d>=0?'up':'dn');
+  }
+  const mb = document.getElementById('mbadge');
+  if (lm>0) {
+    const d = machines.length-lm;
+    mb.style.display='inline-block';
+    mb.textContent = (d>=0?'＋':'')+d+' 種類';
+    mb.className = 'cmpbadge '+(d>=0?'up':'dn');
+  }
+}
+
+// 初期化
+if (userId) {
+  document.getElementById('user-badge').innerHTML = '<i class="ti ti-user"></i> '+userName;
+} else {
+  setTimeout(() => document.getElementById('reg-overlay').style.display='block', 500);
+}
+renderGrid();
+renderMachines();
+loadGoal();
 </script>
 </body>
 </html>
