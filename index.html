@@ -288,8 +288,8 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
       <div class="stttl" style="color:var(--purple-dk)">
         <i class="ti ti-user" aria-hidden="true"></i>スタッフより
       </div>
-      <div class="stbody" style="color:var(--purple)">
-        一年間、お疲れさまでした！<br>来年もここで一緒に頑張りましょう。
+      <div class="stbody" style="color:var(--purple)" id="year-msg">
+        読み込み中...
       </div>
     </div>
   </div>
@@ -360,7 +360,7 @@ function showPage(id) {
     if (n===id) document.querySelectorAll('.nb')[i].classList.add('active');
   });
   if (id==='goal') loadGoal();
-  if (id==='compare') updCmp();
+  if (id==='compare') { updCmp(); loadYearMessage(); }
 }
 
 // 登録画面
@@ -565,6 +565,24 @@ async function saveGoal() {
 }
 
 // 振り返り
+async function loadYearMessage() {
+  const el = document.getElementById('year-msg');
+  if (!userId) {
+    el.innerHTML = '登録すると、スタッフからのメッセージが届きます。';
+    return;
+  }
+  try {
+    const r = await gasGet({ action: 'getYearMessage', userId });
+    if (r && r.yearMessage) {
+      el.innerHTML = r.yearMessage.replace(/\n/g, '<br>');
+    } else {
+      el.innerHTML = 'スタッフからのメッセージはまだありません。<br>年度末にスタッフが入力します。';
+    }
+  } catch(e) {
+    el.innerHTML = '一年間、お疲れさまでした！<br>来年もここで一緒に頑張りましょう。';
+  }
+}
+
 function updCmp() {
   const lv = parseInt(document.getElementById('lv').value) || 0;
   const lm = parseInt(document.getElementById('lm').value) || 0;
