@@ -169,9 +169,20 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
     <div class="prog-bg"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
     <div class="prog-lbl" id="prog-lbl">次の節目まで あと 10 回</div>
 
-    <button class="big-btn btn-teal" onclick="addStamp()" id="stamp-btn">
-      <i class="ti ti-plus" aria-hidden="true"></i>今日来たよ！スタンプを押す
-    </button>
+    <div id="checkin-status-box" style="display:none">
+      <div class="big-btn" id="checkin-ok" style="background:var(--teal-light);color:var(--teal-dk);box-shadow:none;display:none">
+        <i class="ti ti-circle-check" aria-hidden="true"></i><span id="checkin-ok-text">本日のスタンプを押しました！</span>
+      </div>
+      <div class="big-btn" id="checkin-already" style="background:var(--amber-light);color:#633806;box-shadow:none;display:none">
+        <i class="ti ti-info-circle" aria-hidden="true"></i>本日はすでにスタンプ済みです
+      </div>
+      <div class="big-btn" id="checkin-err" style="background:var(--red-light);color:var(--red-dk);box-shadow:none;display:none">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>記録に失敗しました。スタッフへお声がけください
+      </div>
+    </div>
+    <div class="big-btn btn-outline" id="checkin-guide" style="cursor:default">
+      <i class="ti ti-qrcode" aria-hidden="true"></i>受付のQRコードを読み込むとスタンプが貯まります
+    </div>
     <div class="notify" id="notify">
       <i class="ti ti-refresh" aria-hidden="true"></i><span id="notify-msg"></span>
     </div>
@@ -327,6 +338,7 @@ let machines = JSON.parse(localStorage.getItem('techo_machines') || '[]');
 let curM = new Date().getMonth() + 1;
 let curY = new Date().getFullYear();
 let target = 4, curAch = '', goalStore = {};
+let pendingCheckin = false;
 
 // GAS通信
 async function gasGet(params) {
@@ -385,6 +397,10 @@ async function registerUser() {
   document.getElementById('user-badge').innerHTML = '<i class="ti ti-user"></i> '+name;
   document.getElementById('reg-overlay').style.display = 'none';
   btn.disabled = false;
+  if (pendingCheckin) {
+    pendingCheckin = false;
+    doCheckin();
+  }
 }
 
 // グリッド描画
@@ -424,24 +440,48 @@ function renderGrid() {
 }
 
 // スタンプを押す
-async function addStamp() {
-  if (!userId) { showReg(); return; }
-  if (stamps>=30) { alert('30回達成！\nスタッフに声をかけてください！'); return; }
-  stamps++;
-  renderGrid();
-  // 押したセルをアニメ
-  const cells = document.querySelectorAll('.sc');
-  if (cells[stamps-1]) { cells[stamps-1].classList.add('pop'); }
-  showNotify('load', '記録しています...');
+// QRコード経由でアプリが開かれた時だけ呼ばれるチェックイン処理
+async function doCheckin() {
+  if (!userId) {
+    // 未登録ならまず登録を促し、登録完了後に自動でチェックインする
+    pendingCheckin = true;
+    showReg();
+    return;
+  }
+  const box = document.getElementById('checkin-status-box');
+  const okEl = document.getElementById('checkin-ok');
+  const alreadyEl = document.getElementById('checkin-already');
+  const errEl = document.getElementById('checkin-err');
+  box.style.display = 'block';
+  okEl.style.display = 'none';
+  alreadyEl.style.display = 'none';
+  errEl.style.display = 'none';
+
   try {
-    await gasGet({action:'addStamp', userId, userName, stampType:'来館', note:''});
-    showNotify('ok', '記録しました！');
-    if (MS.includes(stamps)) {
-      setTimeout(() => alert('🎉 '+stamps+'回達成！\n受付スタッフに声をかけてください！\nメッセージカードをプレゼントします。'), 300);
+    const r = await gasGet({action:'addStamp', userId, userName, stampType:'来館', note:''});
+    if (r && r.alreadyStamped) {
+      alreadyEl.style.display = 'flex';
+    } else if (r && r.success !== false) {
+      stamps = r.newTotal || (stamps + 1);
+      renderGrid();
+      const cells = document.querySelectorAll('.sc');
+      if (cells[stamps-1]) cells[stamps-1].classList.add('pop');
+      okEl.style.display = 'flex';
+      if (r.isMilestone) {
+        setTimeout(() => alert('🎉 '+stamps+'回達成！\n受付スタッフに声をかけてください！\nメッセージカードをプレゼントします。'), 400);
+      }
+    } else {
+      errEl.style.display = 'flex';
     }
   } catch(e) {
-    showNotify('err', '記録を保存できませんでした（次回再試行します）');
+    errEl.style.display = 'flex';
   }
+}
+
+// マシン初挑戦は引き続き手動ボタンで記録（QR化していないため）
+async function addStamp() {
+  // 互換用に残置（直接は呼ばれない）
+  doCheckin();
 }
 
 // マシン初挑戦
@@ -607,12 +647,18 @@ function updCmp() {
 // 初期化
 if (userId) {
   document.getElementById('user-badge').innerHTML = '<i class="ti ti-user"></i> '+userName;
-} else {
-  setTimeout(() => document.getElementById('reg-overlay').style.display='block', 500);
 }
 renderGrid();
 renderMachines();
 loadGoal();
+
+// URLに ?checkin=true が付いている時だけチェックインを実行（受付QR用）
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('checkin') === 'true') {
+  doCheckin();
+} else if (!userId) {
+  setTimeout(() => document.getElementById('reg-overlay').style.display='block', 500);
+}
 </script>
 </body>
 </html>
