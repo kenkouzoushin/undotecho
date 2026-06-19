@@ -149,18 +149,15 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
 .celeb-close{width:100%;padding:15px;font-size:15px;font-weight:700;border-radius:12px;border:none;cursor:pointer;background:var(--teal);color:#fff;font-family:inherit}
 .celeb-close:active{opacity:.85;transform:scale(.98)}
 
-/* クラッカー */
-.popper{position:absolute;bottom:-6px;width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:34px solid #4A4A55;animation:popperShake .35s ease 0.05s 2}
-.popper.left{left:-10px;transform:rotate(-12deg)}
-.popper.right{right:-10px;transform:rotate(12deg) scaleX(-1)}
-@keyframes popperShake{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(-22deg)}}
-
 /* 紙吹雪パーティクル */
-.confetti-piece{position:absolute;top:-10px;opacity:0;border-radius:2px;animation:confettiFall 2.2s ease-in forwards}
+.confetti-piece{position:fixed;border-radius:2px;pointer-events:none;animation:confettiFall var(--dur,2s) ease-in var(--delay,0s) forwards}
 @keyframes confettiFall{
-  0%{opacity:1;transform:translateY(0) translateX(0) rotate(0deg)}
-  100%{opacity:0;transform:translateY(420px) translateX(var(--drift,0px)) rotate(var(--spin,360deg))}
+  0%  {opacity:1;transform:translateY(0) translateX(0) rotate(0deg)}
+  100%{opacity:0;transform:translateY(var(--fall,500px)) translateX(var(--drift,0px)) rotate(var(--spin,360deg))}
 }
+/* 放射ライン */
+.burst-line{position:fixed;transform-origin:0 0;pointer-events:none;animation:burstFade 0.7s ease-out forwards}
+@keyframes burstFade{0%{opacity:1;width:0}60%{opacity:1}100%{opacity:0;width:var(--len,300px)}}
 </style>
 </head>
 <body>
@@ -337,8 +334,6 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
   <!-- 利用者登録画面 -->
   <div id="celebrate-overlay">
     <div class="celeb-card" id="celeb-card">
-      <div class="popper left"></div>
-      <div class="popper right"></div>
       <div class="celeb-badge"><i class="ti ti-star-filled" aria-hidden="true"></i></div>
       <div class="celeb-title" id="celeb-title">10回 達成！</div>
       <div class="celeb-sub">おめでとうございます！</div>
@@ -347,7 +342,7 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
         <i class="ti ti-gift" aria-hidden="true"></i>
         <span>山武市の特産品をプレゼント！</span>
       </div>
-      <button class="celeb-close" onclick="closeCelebration()">受付スタッフに伝える</button>
+      <button class="celeb-close" onclick="closeCelebration()">閉じる</button>
     </div>
   </div>
 
@@ -706,39 +701,74 @@ function updCmp() {
 // ── 節目達成お祝い演出 ──────────────────────────────────
 const CONFETTI_COLORS = ['#EF9F27','#1D9E75','#534AB7','#E53E3E','#FFCE54','#48BBB2','#F687B3'];
 
-function spawnConfetti(card) {
-  const count = 46;
+// 紙吹雪を画面全体に生成
+function spawnConfetti() {
+  const count = 72;
   for (let i = 0; i < count; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    const size = 5 + Math.random() * 7;
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const size = 5 + Math.random() * 10;
     const isCircle = Math.random() > 0.5;
-    piece.style.width = size + 'px';
-    piece.style.height = size + 'px';
-    if (isCircle) piece.style.borderRadius = '50%';
-    piece.style.background = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
-    piece.style.left = (20 + Math.random()*260) + 'px';
-    piece.style.setProperty('--drift', (Math.random()*160-80) + 'px');
-    piece.style.setProperty('--spin', (Math.random()*720-360) + 'deg');
-    piece.style.animationDelay = (Math.random()*0.4) + 's';
-    piece.style.animationDuration = (1.6 + Math.random()*1.0) + 's';
-    card.appendChild(piece);
-    setTimeout(() => piece.remove(), 3200);
+    el.style.width  = size + 'px';
+    el.style.height = size + 'px';
+    if (isCircle) el.style.borderRadius = '50%';
+    el.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    // 画面全体からランダムに降らせる
+    el.style.left = (Math.random() * 100) + 'vw';
+    el.style.top  = '-12px';
+    el.style.setProperty('--fall',  (window.innerHeight * (0.7 + Math.random()*0.5)) + 'px');
+    el.style.setProperty('--drift', (Math.random()*180 - 90) + 'px');
+    el.style.setProperty('--spin',  (Math.random()*720 - 360) + 'deg');
+    el.style.setProperty('--dur',   (1.6 + Math.random()*1.2) + 's');
+    el.style.setProperty('--delay', (Math.random()*0.5) + 's');
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
   }
+}
+
+// 画面4隅＋上中央から放射ライン
+function spawnBursts() {
+  const W = window.innerWidth, H = window.innerHeight;
+  // [発射源x, y, 方向角度群]
+  const sources = [
+    [0,   0,   [25, 50, 75]],
+    [W,   0,   [105, 130, 155]],
+    [W/2, 0,   [155, 180, 205]],
+    [0,   H,   [-25, -50, -75]],
+    [W,   H,   [-105, -130, -155]],
+  ];
+  sources.forEach(([sx, sy, angles], si) => {
+    angles.forEach((deg, ai) => {
+      const el = document.createElement('div');
+      el.className = 'burst-line';
+      const len = Math.max(W, H) * 0.88;
+      const rad = deg * Math.PI / 180;
+      el.style.left   = sx + 'px';
+      el.style.top    = sy + 'px';
+      el.style.height = '3px';
+      el.style.background = CONFETTI_COLORS[(si * 3 + ai) % CONFETTI_COLORS.length];
+      el.style.transform  = `rotate(${deg}deg)`;
+      el.style.setProperty('--len', len + 'px');
+      el.style.animationDelay = (ai * 0.04) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    });
+  });
 }
 
 function showCelebration(num) {
   const overlay = document.getElementById('celebrate-overlay');
-  const card = document.getElementById('celeb-card');
+  const card    = document.getElementById('celeb-card');
   document.getElementById('celeb-title').textContent = num + '回 達成！';
-  // アニメーションをリトリガーするため一度クラスを外して再追加
+  // カードのポップアニメをリセット
   card.style.animation = 'none';
-  card.offsetHeight; // reflow
+  card.offsetHeight;
   card.style.animation = '';
   overlay.classList.add('show');
-  spawnConfetti(card);
-  // 追加で少し時間差を付けてもう一度紙吹雪を降らせる
-  setTimeout(() => spawnConfetti(card), 500);
+  // 演出を発火
+  spawnBursts();
+  spawnConfetti();
+  setTimeout(() => spawnConfetti(), 450);
 }
 
 function closeCelebration() {
