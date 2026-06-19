@@ -132,6 +132,35 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
 /* お祝いアニメ */
 @keyframes pop{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
 .pop{animation:pop .3s ease}
+
+/* ── 節目達成お祝い演出 ── */
+#celebrate-overlay{position:fixed;inset:0;background:rgba(20,30,40,.55);z-index:300;display:none;align-items:center;justify-content:center;padding:24px}
+#celebrate-overlay.show{display:flex}
+.celeb-card{position:relative;background:var(--card);border-radius:24px;padding:36px 28px 30px;width:100%;max-width:340px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:visible;transform:scale(0.7);opacity:0;animation:celebPop .5s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes celebPop{to{transform:scale(1);opacity:1}}
+.celeb-badge{width:108px;height:108px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;position:relative;animation:celebBounce 1.1s ease-in-out 0.4s 2}
+.celeb-badge i{font-size:54px;color:#fff}
+@keyframes celebBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.celeb-title{font-size:24px;font-weight:800;color:var(--text);margin-bottom:6px}
+.celeb-sub{font-size:14px;color:var(--text-s);margin-bottom:18px}
+.celeb-gift{background:var(--teal-light);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:22px}
+.celeb-gift i{font-size:20px;color:var(--teal-dk)}
+.celeb-gift span{font-size:14px;font-weight:700;color:var(--teal-dk)}
+.celeb-close{width:100%;padding:15px;font-size:15px;font-weight:700;border-radius:12px;border:none;cursor:pointer;background:var(--teal);color:#fff;font-family:inherit}
+.celeb-close:active{opacity:.85;transform:scale(.98)}
+
+/* クラッカー */
+.popper{position:absolute;bottom:-6px;width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:34px solid #4A4A55;animation:popperShake .35s ease 0.05s 2}
+.popper.left{left:-10px;transform:rotate(-12deg)}
+.popper.right{right:-10px;transform:rotate(12deg) scaleX(-1)}
+@keyframes popperShake{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(-22deg)}}
+
+/* 紙吹雪パーティクル */
+.confetti-piece{position:absolute;top:-10px;opacity:0;border-radius:2px;animation:confettiFall 2.2s ease-in forwards}
+@keyframes confettiFall{
+  0%{opacity:1;transform:translateY(0) translateX(0) rotate(0deg)}
+  100%{opacity:0;transform:translateY(420px) translateX(var(--drift,0px)) rotate(var(--spin,360deg))}
+}
 </style>
 </head>
 <body>
@@ -306,6 +335,22 @@ body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:var(--bg);color:
   </div>
 
   <!-- 利用者登録画面 -->
+  <div id="celebrate-overlay">
+    <div class="celeb-card" id="celeb-card">
+      <div class="popper left"></div>
+      <div class="popper right"></div>
+      <div class="celeb-badge"><i class="ti ti-star-filled" aria-hidden="true"></i></div>
+      <div class="celeb-title" id="celeb-title">10回 達成！</div>
+      <div class="celeb-sub">おめでとうございます！</div>
+      <div style="font-size:13px;color:var(--text-s);margin:-10px 0 14px;line-height:1.6">スタッフにこの画面を見せてください。</div>
+      <div class="celeb-gift">
+        <i class="ti ti-gift" aria-hidden="true"></i>
+        <span>山武市の特産品をプレゼント！</span>
+      </div>
+      <button class="celeb-close" onclick="closeCelebration()">受付スタッフに伝える</button>
+    </div>
+  </div>
+
   <div id="scanner-overlay" style="display:none;position:fixed;inset:0;background:#000;z-index:200">
     <div style="position:relative;width:100%;height:100%">
       <video id="scanner-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover"></video>
@@ -482,7 +527,7 @@ async function doCheckin() {
       if (cells[stamps-1]) cells[stamps-1].classList.add('pop');
       okEl.style.display = 'flex';
       if (r.isMilestone) {
-        setTimeout(() => alert('🎉 '+stamps+'回達成！\n受付スタッフに声をかけてください！\nメッセージカードをプレゼントします。'), 400);
+        setTimeout(() => showCelebration(stamps), 350);
       }
     } else {
       errEl.style.display = 'flex';
@@ -656,6 +701,48 @@ function updCmp() {
     mb.textContent = (d>=0?'＋':'')+d+' 種類';
     mb.className = 'cmpbadge '+(d>=0?'up':'dn');
   }
+}
+
+// ── 節目達成お祝い演出 ──────────────────────────────────
+const CONFETTI_COLORS = ['#EF9F27','#1D9E75','#534AB7','#E53E3E','#FFCE54','#48BBB2','#F687B3'];
+
+function spawnConfetti(card) {
+  const count = 46;
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 5 + Math.random() * 7;
+    const isCircle = Math.random() > 0.5;
+    piece.style.width = size + 'px';
+    piece.style.height = size + 'px';
+    if (isCircle) piece.style.borderRadius = '50%';
+    piece.style.background = CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+    piece.style.left = (20 + Math.random()*260) + 'px';
+    piece.style.setProperty('--drift', (Math.random()*160-80) + 'px');
+    piece.style.setProperty('--spin', (Math.random()*720-360) + 'deg');
+    piece.style.animationDelay = (Math.random()*0.4) + 's';
+    piece.style.animationDuration = (1.6 + Math.random()*1.0) + 's';
+    card.appendChild(piece);
+    setTimeout(() => piece.remove(), 3200);
+  }
+}
+
+function showCelebration(num) {
+  const overlay = document.getElementById('celebrate-overlay');
+  const card = document.getElementById('celeb-card');
+  document.getElementById('celeb-title').textContent = num + '回 達成！';
+  // アニメーションをリトリガーするため一度クラスを外して再追加
+  card.style.animation = 'none';
+  card.offsetHeight; // reflow
+  card.style.animation = '';
+  overlay.classList.add('show');
+  spawnConfetti(card);
+  // 追加で少し時間差を付けてもう一度紙吹雪を降らせる
+  setTimeout(() => spawnConfetti(card), 500);
+}
+
+function closeCelebration() {
+  document.getElementById('celebrate-overlay').classList.remove('show');
 }
 
 // ── QRスキャナー機能 ──────────────────────────────────
